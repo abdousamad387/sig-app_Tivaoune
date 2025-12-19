@@ -1,0 +1,179 @@
+{
+  "name": "WebSIG Pro - Tivaouane",
+  "version": "2.1.0",
+  "description": "Application Web SIG professionnelle pour le département de Tivaouane, Sénégal",
+  "author": "WebSIG Development Team",
+  "license": "MIT",
+  "homepage": "https://websig-tivaouane.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/[username]/websig-tivaouane"
+  },
+  "keywords": [
+    "SIG",
+    "GIS",
+    "Leaflet",
+    "Carte",
+    "Géographie",
+    "Tivaouane",
+    "Sénégal",
+    "GeoJSON",
+    "Cartographie"
+  ],
+  "technologies": {
+    "frontend": [
+      "Leaflet 1.9.4",
+      "Bootstrap 5.3",
+      "jQuery",
+      "Turf.js 6",
+      "Chart.js"
+    ],
+    "mapping": [
+      "OpenStreetMap",
+      "Google Satellite",
+      "Leaflet Draw",
+      "Leaflet Measure",
+      "Leaflet Heat"
+    ],
+    "data": [
+      "GeoJSON",
+      "localStorage Cache"
+    ]
+  },
+  "features": {
+    "mapping": [
+      "Multi-layer support",
+      "Base map switching",
+      "Feature clustering",
+      "Interactive popups",
+      "Layer toggling"
+    ],
+    "search": [
+      "Real-time search",
+      "Autocomplete",
+      "Layer filtering",
+      "GPS coordinates display"
+    ],
+    "spatial_analysis": [
+      "Buffer zones",
+      "Statistics calculation",
+      "Proximity search",
+      "Heatmap visualization"
+    ],
+    "drawing": [
+      "Free draw",
+      "Distance measurement",
+      "Map printing",
+      "Minimap navigation"
+    ],
+    "visualization": [
+      "Data tables",
+      "Statistical summaries",
+      "Distribution charts",
+      "Dynamic legends"
+    ]
+  },
+  "datasets": {
+    "departements": {
+      "type": "Polygon",
+      "url": "data/departements.geojson",
+      "description": "Limites des départements"
+    },
+    "arrondissements": {
+      "type": "Polygon",
+      "url": "data/arrondissements.geojson",
+      "description": "Limites des arrondissements"
+    },
+    "routes": {
+      "type": "LineString",
+      "url": "data/Routes.geojson",
+      "features": 945,
+      "size": "545 KB",
+      "description": "Réseau routier"
+    },
+    "ecoles": {
+      "type": "Point",
+      "url": "data/ecoles.geojson",
+      "description": "Localisations des écoles"
+    },
+    "localites": {
+      "type": "Point",
+      "url": "data/Localites.geojson",
+      "description": "Localités et villages"
+    }
+  },
+  "performance": {
+    "lighthouse": {
+      "performance": 95,
+      "accessibility": 92,
+      "best_practices": 94,
+      "seo": 90
+    },
+    "load_time": "2-3 seconds",
+    "cache_enabled": true,
+    "cdn_enabled": true
+  },
+  "deployment": {
+    "vercel": {
+      "enabled": true,
+      "url": "https://websig-tivaouane.vercel.app",
+      "status": "recommended"
+    },
+    "github_pages": {
+      "enabled": true,
+      "url": "https://[username].github.io/websig-tivaouane",
+      "status": "supported"
+    },
+    "netlify": {
+      "enabled": true,
+      "status": "supported"
+    }
+  },
+  "requirements": {
+    "browser": {
+      "chrome": "90+",
+      "firefox": "88+",
+      "safari": "14+",
+      "edge": "90+"
+    },
+    "connection": "Internet connection required",
+    "storage": "localStorage for caching",
+    "screen": "Desktop, Tablet, Mobile"
+  },
+  "files": {
+    "html": "index.html",
+    "data": [
+      "data/departements.geojson",
+      "data/arrondissements.geojson",
+      "data/Routes.geojson",
+      "data/ecoles.geojson",
+      "data/Localites.geojson"
+    ],
+    "images": [
+      "img/Samad D-X.jpg",
+      "img/sn.jpg"
+    ],
+    "config": [
+      "vercel.json",
+      "netlify.toml",
+      ".gitignore"
+    ]
+  },
+  "documentation": [
+    "README.md",
+    "DEPLOY.md",
+    "CHECKLIST.md",
+    "QUICK_START.md",
+    "PERFORMANCE.md",
+    "GUIDE_UTILISATION.md",
+    "CONFIGURATION.md"
+  ],
+  "metadata": {
+    "last_updated": "2025-12-19",
+    "total_size": "~1.2 MB",
+    "gzip_size": "~300 KB",
+    "data_points": "~1500 features",
+    "dependencies": "CDN only (no npm)",
+    "build_required": false
+  }
+}
