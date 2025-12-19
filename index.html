@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSIG Pro - Département de Tivaouane</title>
+
+    <!-- Leaflet Core -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-measure@3.1.0/dist/leaflet-measure.css">
+    <script src="https://unpkg.com/leaflet-measure@3.1.0/dist/leaflet-measure.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.8/dist/leaflet-search.min.css" />
+    <script src="https://unpkg.com/leaflet-search@2.9.8/dist/leaflet-search.min.js"></script>
+    
+    <!-- Turf.js - Analyse Spatiale -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    
+    <!-- Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
+    <!-- Leaflet Heat -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #06b6d4;
+            --secondary: #8b5cf6;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f97316;
+            --info: #3b82f6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --sidebar-width: 380px;
+            --navbar-height: 80px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        /* ==================== NAVBAR ATTRACTIF ==================== */
+        .navbar-custom {
+            height: var(--navbar-height);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border-bottom: 3px solid var(--primary);
+            z-index: 2000;
+            padding: 0 30px;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 10px 0;
+        }
+
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+            border: 3px solid var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-box:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-info h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-info p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            border: 2px solid transparent;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn i {
+            font-size: 1.1rem;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .nav-tools {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coords-badge {
+            background: rgba(6, 182, 212, 0.15);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+        }
+
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .tool-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        /* ==================== LAYOUT ==================== */
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--navbar-height));
+            position: relative;
+        }
+
+        /* ==================== SIDEBAR PANELS ==================== */
+        .sidebar-panel {
+            position: absolute;
+            left: -420px;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow-y: auto;
+            border-right: 3px solid var(--primary);
+        }
+
+        .sidebar-panel.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-header h5 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .sidebar-content {
+            padding: 25px;
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+
+        /* ==================== CONTROL CARDS ==================== */
+        .control-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .control-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .card-title i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .card-title h6 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== LAYER ITEMS ==================== */
+        .layer-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .layer-item:hover {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--primary);
+            transform: translateX(8px);
+        }
+
+        .layer-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            margin-right: 15px;
+            accent-color: var(--primary);
+        }
+
+        .layer-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .icon-line {
+            width: 30px;
+            height: 5px;
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-polygon {
+            width: 22px;
+            height: 22px;
+            border: 3px solid;
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+
+        .layer-name {
+            flex: 1;
+            font-weight: 600;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .layer-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        /* ==================== MAP ==================== */
+        #map {
+            flex: 1;
+            background: #1a1a2e;
+        }
+
+        /* ==================== LEGEND ==================== */
+        .map-legend {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--primary);
+            min-width: 220px;
+        }
+
+        .legend-header {
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1.1rem;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .legend-row:hover {
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .legend-symbol {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .legend-symbol.line {
+            width: 35px;
+            height: 5px;
+            border-radius: 3px;
+            border: none;
+        }
+
+        .legend-symbol.polygon {
+            border-radius: 6px;
+            border: 3px solid;
+        }
+
+        .legend-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        /* ==================== POPUPS ==================== */
+        .leaflet-popup-content-wrapper {
+            border-radius: 16px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            padding: 0;
+            background: #1e293b;
+        }
+
+        .leaflet-popup-content {
+            margin: 0;
+            width: 340px !important;
+        }
+
+        .popup-head {
+            padding: 20px 25px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .popup-content {
+            padding: 25px;
+            background: #0f172a;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* ==================== STATS CARDS ==================== */
+        .stat-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2));
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 2px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .stat-text {
+            font-size: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ==================== CHART WRAPPER ==================== */
+        .chart-wrapper {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            position: relative;
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.2);
+        }
+
+        .chart-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .chart-header {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* ==================== LOADER ==================== */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 8px solid rgba(6, 182, 212, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-title {
+            color: white;
+            margin-top: 30px;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .loader-subtitle {
+            color: #94a3b8;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer-brand {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1500;
+            border: 2px solid var(--primary);
+        }
+
+        .footer-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+        }
+
+        .footer-info {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 992px) {
+            .sidebar-panel {
+                width: 100%;
+                left: -100%;
+            }
+            .coords-badge {
+                display: none;
+            }
+            .nav-menu {
+                flex-wrap: wrap;
+            }
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .brand-info h3 {
+                font-size: 1.2rem;
+            }
+            .tool-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* ==================== TABLES ==================== */
+        .data-table {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .data-table thead th {
+            color: white;
+            font-weight: 700;
+            padding: 15px;
+            border: none;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            transition: background 0.2s;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        /* ==================== SPATIAL TOOLS ==================== */
+        .form-label {
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border: 2px solid rgba(6, 182, 212, 0.3) !important;
+            color: white !important;
+            border-radius: 8px !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(15, 23, 42, 0.9) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 0.2rem rgba(6, 182, 212, 0.25) !important;
+        }
+
+        .form-control::placeholder {
+            color: #64748b !important;
+        }
+
+        .btn-info {
+            background: #3b82f6 !important;
+            border-color: #3b82f6 !important;
+            color: white !important;
+        }
+
+        .btn-info:hover {
+            background: #2563eb !important;
+            border-color: #2563eb !important;
+        }
+
+        .heatmap-layer {
+            opacity: 0.7;
+        }
+
+        .data-table tbody td {
+            color: #e2e8f0;
+            padding: 15px;
+            border: none;
+        }
+
+        .alert-custom {
+            background: rgba(6, 182, 212, 0.15);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            color: #e2e8f0;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loader-title">Chargement du WebSIG Pro</div>
+        <div class="loader-subtitle">Initialisation des couches géographiques...</div>
+    </div>
+
+    <!-- Navbar Attractive -->
+    <nav class="navbar-custom">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="brand-wrapper">
+                <div class="logo-box">
+                    <img src="img/sn.jpg" alt="Logo Sénégal">
+                </div>
+                <div class="brand-info">
+                    <h3>WEBSIG TIVAOUANE</h3>
+                    <p>Système d'Information Géographique</p>
+                </div>
+            </div>
+
+            <ul class="nav-menu d-none d-lg-flex">
+                <li><a class="nav-btn active" href="#" onclick="app.ui.togglePanel('layers')"><i class="bi bi-layers"></i> Couches</a></li>
+                <li><a class="nav-btn" href="#" onclick="app.ui.togglePanel('data')"><i class="bi bi-table"></i> Données</a></li>
+                <li><a class="nav-btn" href="#" onclick="app.ui.togglePanel('stats')"><i class="bi bi-graph-up"></i> Stats</a></li>
+                <li><a class="nav-btn" href="#" onclick="app.ui.togglePanel('analysis')"><i class="bi bi-gear"></i> Outils</a></li>
+                <li><a class="nav-btn" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="bi bi-info-circle"></i> Info</a></li>
+            </ul>
+
+            <div class="nav-tools">
+                <div class="coords-badge d-none d-md-block" id="coords-display">Lat: -- | Lon: --</div>
+                <button class="tool-btn" onclick="app.tools.zoomGlobal()" title="Vue globale"><i class="bi bi-globe"></i></button>
+                <button class="tool-btn" onclick="app.tools.downloadData()" title="Exporter"><i class="bi bi-download"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Panel 1: Gestion des Couches -->
+        <div id="panel-layers" class="sidebar-panel active">
+            <div class="sidebar-header">
+                <h5><i class="bi bi-layers-fill"></i>Gestion des Couches</h5>
+                <button class="close-btn" onclick="app.ui.closeAllPanels()"><i class="bi bi-x"></i></button>
+            </div>
+            <div class="sidebar-content">
+                <div class="control-card">
+                    <div class="card-title">
+                        <i class="bi bi-map"></i>
+                        <h6>Limites Administratives</h6>
+                    </div>
+                    <div id="admin-layers"></div>
+                </div>
+
+                <div class="control-card">
+                    <div class="card-title">
+                        <i class="bi bi-building"></i>
+                        <h6>Infrastructures</h6>
+                    </div>
+                    <div id="infra-layers"></div>
+                </div>
+
+                <div class="alert-custom">
+                    <i class="bi bi-lightbulb-fill me-2"></i>
+                    <strong>Astuce:</strong> Cliquez sur les éléments pour voir les détails
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 2: Catalogue de Données -->
+        <div id="panel-data" class="sidebar-panel">
+            <div class="sidebar-header">
+                <h5><i class="bi bi-table"></i>Catalogue de Données</h5>
+                <button class="close-btn" onclick="app.ui.closeAllPanels()"><i class="bi bi-x"></i></button>
+            </div>
+            <div class="sidebar-content">
+                <table class="data-table table">
+                    <thead>
+                        <tr>
+                            <th>Couche</th>
+                            <th>Type</th>
+                            <th>Objets</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panel 3: Statistiques COMPLÈTEMENT RESTRUCTURÉ -->
+        <div id="panel-stats" class="sidebar-panel">
+            <div class="sidebar-header">
+                <h5><i class="bi bi-bar-chart"></i>Statistiques & Graphiques</h5>
+                <button class="close-btn" onclick="app.ui.closeAllPanels()"><i class="bi bi-x"></i></button>
+            </div>
+            <div class="sidebar-content" style="padding: 0; overflow-y: auto;">
+                
+                <!-- CARTES STATISTIQUES -->
+                <div style="padding: 20px; background: rgba(15,23,42,0.5);">
+                    <h6 style="color: #06b6d4; margin-bottom: 15px; font-weight: 700;">📊 APERÇU GÉNÉRAL</h6>
+                    <div class="row g-2" id="stat-cards"></div>
+                </div>
+
+                <!-- GRAPHIQUE 1: DOUGHNUT -->
+                <div style="padding: 20px; border-bottom: 2px solid rgba(6,182,212,0.2);">
+                    <h6 style="color: #22c55e; margin-bottom: 15px; font-weight: 700;">🍰 RÉPARTITION DES DONNÉES</h6>
+                    <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px; border: 1px solid rgba(6,182,212,0.2);">
+                        <canvas id="chartDoughnut"></canvas>
+                    </div>
+                </div>
+
+                <!-- GRAPHIQUE 2: BAR -->
+                <div style="padding: 20px; border-bottom: 2px solid rgba(6,182,212,0.2);">
+                    <h6 style="color: #f97316; margin-bottom: 15px; font-weight: 700;">📊 ANALYSE COMPARATIVE</h6>
+                    <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px; border: 1px solid rgba(6,182,212,0.2);">
+                        <canvas id="chartBar"></canvas>
+                    </div>
+                </div>
+
+                <!-- GRAPHIQUE 3: LINE -->
+                <div style="padding: 20px;">
+                    <h6 style="color: #3b82f6; margin-bottom: 15px; font-weight: 700;">📈 ÉVOLUTION TEMPORELLE</h6>
+                    <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px; border: 1px solid rgba(6,182,212,0.2);">
+                        <canvas id="chartLine"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Panel 4: Analyse -->
+        <div id="panel-analysis" class="sidebar-panel">
+            <div class="sidebar-header">
+                <h5><i class="bi bi-tools"></i>Outils d'Analyse</h5>
+                <button class="close-btn" onclick="app.ui.closeAllPanels()"><i class="bi bi-x"></i></button>
+            </div>
+            <div class="sidebar-content">
+                <div class="control-card">
+                    <div class="card-title">
+                        <i class="bi bi-pencil-square"></i>
+                        <h6>Dessin</h6>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Utilisez les outils de dessin sur la carte</p>
+                    <button class="btn btn-danger w-100" onclick="app.tools.clearDrawings()">
+                        <i class="bi bi-trash"></i> Effacer
+                    </button>
+                </div>
+
+                <div class="control-card">
+                    <div class="card-title">
+                        <i class="bi bi-rulers"></i>
+                        <h6>Mesures</h6>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Cliquez sur l'outil de mesure sur la carte</p>
+                </div>
+                
+                <div class="control-card">
+                    <div class="card-title">
+                        <i class="bi bi-lightning-fill"></i>
+                        <h6>Requêtes Spatiales</h6>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Rayon de Buffer (km)</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="bufferDistance" value="1" min="0.1" step="0.1">
+                            <button class="btn btn-info" onclick="app.spatialTools.createBuffer()">Buffer</button>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Couches à analyser</label>
+                        <select class="form-select form-select-sm" id="spatialLayer">
+                            <option value="">-- Sélectionner --</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success w-100 mb-2" onclick="app.spatialTools.calculateStats()">
+                        <i class="bi bi-graph-up"></i> Statistiques
+                    </button>
+                    <button class="btn btn-warning w-100 mb-2" onclick="app.spatialTools.findNearest()">
+                        <i class="bi bi-pin-map"></i> Plus proche
+                    </button>
+                    <button class="btn btn-primary w-100" onclick="app.spatialTools.heatmap()">
+                        <i class="bi bi-fire"></i> Carte de Chaleur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-brand">
+        <img src="img/Samad D-X.jpg" alt="SAMAD_X" class="footer-logo">
+        <div class="footer-info">© 2025 SAMAD_X</div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: #1e293b; color: white;">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none;">
+                    <h5 class="modal-title"><i class="bi bi-info-circle me-2"></i>À propos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img src="img/sn.jpg" width="80" class="mb-3" style="border-radius: 15px;">
+                        <h4>WebSIG Pro - Tivaouane</h4>
+                        <p class="text-muted">Département de Tivaouane, Région de Thiès</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><strong>Département:</strong> Tivaouane</li>
+                                <li class="mb-2"><strong>Région:</strong> Thiès</li>
+                                <li class="mb-2"><strong>Pays:</strong> Sénégal</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><strong>Technologies:</strong> Leaflet, Bootstrap</li>
+                                <li class="mb-2"><strong>Graphiques:</strong> Chart.js</li>
+                                <li class="mb-2"><strong>Version:</strong> 2.1 Pro</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <img src="img/Samad D-X.jpg" width="60" class="mb-2" style="border-radius: 12px;">
+                        <p class="text-muted">Développé par SAMAX</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            map: null,
+            baseMaps: {},
+            layers: {},
+            layersData: {},
+            drawnItems: new L.FeatureGroup(),
+            searchControl: null,
+            charts: {},
+            
+            config: [
+                { id: 'departements', url: 'data/departements.geojson', type: 'poly', name: 'Départements', color: '#64748b', category: 'admin' },
+                { id: 'arrondissements', url: 'data/arrondissements.geojson', type: 'poly', name: 'Arrondissements', color: '#8b5cf6', category: 'admin' },
+                { id: 'routes', url: 'data/Routes.geojson', type: 'line', name: 'Routes', color: '#f97316', category: 'infra' },
+                { id: 'ecoles', url: 'data/ecoles.geojson', type: 'point', name: 'Écoles', color: '#22c55e', category: 'infra', cluster: true },
+                { id: 'localites', url: 'data/Localites.geojson', type: 'point', name: 'Localités', color: '#ef4444', category: 'infra', cluster: true }
+            ],
+
+            init: function() {
+                console.log('🚀 Initialisation du WebSIG...');
+                this.initMap();
+                this.loadAllData();
+                this.initTools();
+                this.initUI();
+            },
+
+            initMap: function() {
+                console.log('🗺️ Création de la carte...');
+                this.map = L.map('map', {
+                    center: [14.95, -14.97],
+                    zoom: 10,
+                    zoomControl: false
+                });
+
+                L.control.zoom({ position: 'topright' }).addTo(this.map);
+                L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
+
+                const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+                    attribution: '© OpenStreetMap',
+                    maxZoom: 19
+                });
+                
+                const satellite = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { 
+                    attribution: '© Google',
+                    maxZoom: 20
+                });
+                
+                osm.addTo(this.map);
+                
+                this.baseMaps = { "Plan": osm, "Satellite": satellite };
+                L.control.layers(this.baseMaps, null, { position: 'topright' }).addTo(this.map);
+
+                this.map.addLayer(this.drawnItems);
+
+                this.map.on('mousemove', (e) => {
+                    document.getElementById('coords-display').innerHTML = 
+                        `Lat: ${e.latlng.lat.toFixed(5)} | Lon: ${e.latlng.lng.toFixed(5)}`;
+                });
+
+                this.createLegend();
+            },
+
+            loadAllData: async function() {
+                const loader = document.getElementById('loader');
+                console.log('📥 WebSIG - Chargement des données...');
+                
+                try {
+                    // Créer les promesses de fetch avec timeout et caching
+                    const promises = this.config.map(item => {
+                        console.log(`⏳ Chargement: ${item.name}...`);
+                        
+                        // Vérifier le cache localStorage
+                        const cacheKey = `geojson_${item.id}`;
+                        const cached = localStorage.getItem(cacheKey);
+                        if (cached) {
+                            console.log(`📦 Cache trouvé pour ${item.name}`);
+                            try {
+                                const data = JSON.parse(cached);
+                                return Promise.resolve({ 
+                                    id: item.id, 
+                                    data: data, 
+                                    config: item, 
+                                    error: null,
+                                    cached: true 
+                                });
+                            } catch (e) {
+                                console.warn(`⚠️ Cache corrompu pour ${item.name}`);
+                            }
+                        }
+                        
+                        return Promise.race([
+                            fetch(item.url, { 
+                                headers: { 'Accept': 'application/json' },
+                                cache: 'force-cache'
+                            }).then(res => {
+                                console.log(`✅ Réponse reçue pour ${item.name}`);
+                                if (!res.ok) {
+                                    throw new Error(`HTTP ${res.status}`);
+                                }
+                                return res.json();
+                            }),
+                            new Promise((_, reject) => 
+                                setTimeout(() => reject(new Error('Timeout 15s')), 15000)
+                            )
+                        ])
+                        .then(data => {
+                            // Sauvegarder en cache
+                            try {
+                                localStorage.setItem(cacheKey, JSON.stringify(data));
+                            } catch (e) {
+                                console.warn(`⚠️ Impossible de cacher ${item.name}`);
+                            }
+                            console.log(`✅ ${item.name}: ${data.features ? data.features.length : 0} objets`);
+                            return { id: item.id, data: data, config: item, error: null, cached: false };
+                        })
+                        .catch(err => {
+                            console.error(`❌ Erreur ${item.name}: ${err.message}`);
+                            // Essayer le cache même s'il est expiré
+                            const cachedFallback = localStorage.getItem(cacheKey);
+                            if (cachedFallback) {
+                                console.log(`📦 Utilisation du cache expiré pour ${item.name}`);
+                                return { 
+                                    id: item.id, 
+                                    data: JSON.parse(cachedFallback), 
+                                    config: item,
+                                    error: 'Cache expiré',
+                                    cached: true
+                                };
+                            }
+                            return { 
+                                id: item.id, 
+                                data: { type: "FeatureCollection", features: [] }, 
+                                config: item,
+                                error: err.message,
+                                cached: false
+                            };
+                        });
+                    });
+
+                    console.log(`⏳ Traitement de ${this.config.length} couches...`);
+                    const results = await Promise.all(promises);
+                    
+                    const errors = results.filter(r => r.error && !r.cached);
+                    const cached = results.filter(r => r.cached).length;
+                    
+                    if (cached > 0) {
+                        console.log(`📦 ${cached} couche(s) chargée(s) depuis le cache`);
+                    }
+                    
+                    if (errors.length > 0) {
+                        console.warn(`⚠️ ${errors.length} fichier(s) avec erreur (affichage limité)`);
+                        errors.forEach(e => {
+                            console.warn(`   - ${e.config.name}: ${e.error}`);
+                        });
+                    }
+
+                    const loaded = results.length - errors.length;
+                    console.log(`✅ ${loaded}/${results.length} couches chargées`);
+
+                    const searchLayerGroup = new L.LayerGroup();
+
+                    results.forEach(result => {
+                        if (result.data && result.data.features && result.data.features.length > 0) {
+                            this.layersData[result.id] = result.data;
+                            this.createLayer(result.id, result.data, result.config, searchLayerGroup);
+                            this.updateLayerUI(result.id, result.data.features.length, result.config);
+                        } else {
+                            console.warn(`⚠️ Pas de données pour ${result.config.name}`);
+                        }
+                    });
+
+                    this.initSearch(searchLayerGroup);
+                    
+                    setTimeout(() => {
+                        this.initCharts(results);
+                    }, 600);
+                    
+                    setTimeout(() => {
+                        this.tools.zoomGlobal();
+                    }, 400);
+
+                } catch (error) {
+                    console.error("❌ ERREUR CRITIQUE:", error);
+                    console.error("📍 Vérifications:");
+                    console.error("1. Le serveur HTTP est-il lancé? (python -m http.server 8000)");
+                    console.error("2. Les fichiers GeoJSON existent-ils dans data/?");
+                    console.error("3. Chemins attendus:");
+                    this.config.forEach(item => {
+                        console.error(`   - ${item.url}`);
+                    });
+                    
+                    const msg = `❌ ERREUR DE CHARGEMENT\n\nVérifiez que:\n1. Vous avez lancé: python -m http.server 8000\n2. Les fichiers sont dans data/\n3. Ouvrez la console (F12) pour plus de détails`;
+                    alert(msg);
+                } finally {
+                    setTimeout(() => { 
+                        loader.style.display = 'none'; 
+                        console.log('✨ WebSIG chargé avec succès!');
+                    }, 1000);
+                }
+            },
+
+            createLayer: function(id, geojsonData, config, searchGroup) {
+                console.log(`🎨 Création de la couche: ${config.name}`);
+                
+                let style = {};
+                let pointToLayer = null;
+
+                if (config.type === 'poly') {
+                    style = {
+                        color: config.color,
+                        weight: id === 'departements' ? 3 : 2,
+                        fillColor: config.color,
+                        fillOpacity: 0.2,
+                        dashArray: id === 'departements' ? '8, 4' : null
+                    };
+                }
+
+                if (config.type === 'line') {
+                    style = {
+                        color: config.color,
+                        weight: 4,
+                        opacity: 0.8
+                    };
+                }
+
+                if (config.type === 'point') {
+                    pointToLayer = (feature, latlng) => {
+                        return L.circleMarker(latlng, {
+                            radius: 8,
+                            fillColor: config.color,
+                            color: "#fff",
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        });
+                    };
+                }
+
+                const geoJsonLayer = L.geoJSON(geojsonData, {
+                    style: style,
+                    pointToLayer: pointToLayer,
+                    onEachFeature: (feature, layer) => {
+                        const props = feature.properties;
+                        const name = props.nom || props.name || props.NAME || props.NOM || "Non défini";
+                        
+                        let popupContent = `
+                            <div class="popup-head" style="background: ${config.color};">
+                                <i class="bi bi-geo-alt-fill"></i> ${name}
+                            </div>
+                            <div class="popup-content">
+                        `;
+
+                        if (id === 'ecoles') {
+                            popupContent += `
+                                <div class="info-row">
+                                    <span class="info-label">📚 Type:</span>
+                                    <span class="info-value">${props.type || props.TYPE || 'École'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">👥 Élèves:</span>
+                                    <span class="info-value">${props.eleves || props.effectif || props.ELEVES || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🏫 Classes:</span>
+                                    <span class="info-value">${props.classes || props.salles || props.CLASSES || 'N/A'}</span>
+                                </div>
+                            `;
+                        } else if (id === 'localites') {
+                            popupContent += `
+                                <div class="info-row">
+                                    <span class="info-label">📍 Type:</span>
+                                    <span class="info-value">${props.type || props.TYPE || 'Localité'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">👥 Population:</span>
+                                    <span class="info-value">${props.population || props.POPULATION || 'N/A'}</span>
+                                </div>
+                            `;
+                        } else if (id === 'routes') {
+                            popupContent += `
+                                <div class="info-row">
+                                    <span class="info-label">🛣️ Type:</span>
+                                    <span class="info-value">${props.type || props.TYPE || props.classe || 'Route'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">🚧 État:</span>
+                                    <span class="info-value">${props.etat || props.ETAT || 'N/A'}</span>
+                                </div>
+                            `;
+                        } else {
+                            popupContent += `
+                                <div class="info-row">
+                                    <span class="info-label">🗺️ Type:</span>
+                                    <span class="info-value">${config.name}</span>
+                                </div>
+                            `;
+                        }
+
+                        popupContent += `</div>`;
+                        layer.bindPopup(popupContent);
+
+                        if (config.type === 'poly' || config.type === 'line') {
+                            layer.on('mouseover', function() {
+                                this.setStyle({ fillOpacity: 0.5, weight: 5 });
+                            });
+                            layer.on('mouseout', function() {
+                                geoJsonLayer.resetStyle(this);
+                            });
+                        }
+
+                        if (config.type === 'point' && name !== "Non défini") {
+                            layer.feature.properties.searchTitle = name;
+                            searchGroup.addLayer(layer);
+                        }
+                    }
+                });
+
+                if (config.cluster) {
+                    const markers = L.markerClusterGroup({
+                        showCoverageOnHover: false,
+                        maxClusterRadius: 60,
+                        iconCreateFunction: (cluster) => {
+                            const count = cluster.getChildCount();
+                            return L.divIcon({
+                                html: `<div style="background: ${config.color}; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 3px solid white;">${count}</div>`,
+                                className: 'marker-cluster',
+                                iconSize: L.point(45, 45)
+                            });
+                        }
+                    });
+                    markers.addLayer(geoJsonLayer);
+                    this.layers[id] = markers;
+                } else {
+                    this.layers[id] = geoJsonLayer;
+                }
+
+                this.map.addLayer(this.layers[id]);
+            },
+
+            updateLayerUI: function(id, count, config) {
+                const category = config.category;
+                const container = category === 'admin' ? 'admin-layers' : 'infra-layers';
+                
+                let symbolHTML = '';
+                if (config.type === 'point') {
+                    symbolHTML = `<div class="layer-icon"><div class="icon-circle" style="background: ${config.color};"></div></div>`;
+                } else if (config.type === 'line') {
+                    symbolHTML = `<div class="layer-icon"><div class="icon-line" style="background: ${config.color};"></div></div>`;
+                } else {
+                    symbolHTML = `<div class="layer-icon"><div class="icon-polygon" style="border-color: ${config.color}; background: ${config.color}40;"></div></div>`;
+                }
+
+                const layerHTML = `
+                    <div class="layer-item">
+                        <input class="layer-checkbox" type="checkbox" id="chk-${id}" checked onchange="app.toggleLayer('${id}')">
+                        ${symbolHTML}
+                        <span class="layer-name">${config.name}</span>
+                        <span class="layer-badge">${count}</span>
+                    </div>
+                `;
+
+                document.getElementById(container).innerHTML += layerHTML;
+
+                const tbody = document.getElementById('data-table-body');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="badge" style="background: ${config.color};">${config.name}</span></td>
+                        <td>${config.type.toUpperCase()}</td>
+                        <td><strong>${count}</strong></td>
+                        <td><button class="btn btn-sm btn-primary" onclick="app.tools.zoomToLayer('${id}')">Voir</button></td>
+                    </tr>
+                `;
+            },
+
+            toggleLayer: function(id) {
+                const checkbox = document.getElementById(`chk-${id}`);
+                if (checkbox.checked) {
+                    this.map.addLayer(this.layers[id]);
+                } else {
+                    this.map.removeLayer(this.layers[id]);
+                }
+            },
+
+            initSearch: function(searchLayerGroup) {
+                this.searchControl = new L.Control.Search({
+                    layer: searchLayerGroup,
+                    propertyName: 'searchTitle',
+                    marker: false,
+                    moveToLocation: (latlng, title, map) => {
+                        map.setView(latlng, 16);
+                    },
+                    textPlaceholder: 'Rechercher...'
+                });
+                
+                this.searchControl.on('search:locationfound', (e) => {
+                    if(e.layer._popup) e.layer.openPopup();
+                });
+
+                this.map.addControl(this.searchControl);
+            },
+
+            initCharts: function(results) {
+                console.log('📊 TABLES DE DONNÉES');
+                
+                const labels = results.map(r => r.config.name);
+                const data = results.map(r => r.data.features.length);
+                const colors = results.map(r => r.config.color);
+                const total = data.reduce((a,b) => a+b, 0);
+
+                // CARTES STATS
+                const statsContainer = document.getElementById('stat-cards');
+                if (statsContainer) {
+                    statsContainer.innerHTML = `<div class="col-6 mb-2"><div class="stat-box" style="padding:12px;border-color:#22c55e;"><div style="font-size:20px;color:#22c55e;font-weight:700;">${data[3]}</div><div style="font-size:10px;color:#94a3b8;">🎓 Écoles</div></div></div>
+<div class="col-6 mb-2"><div class="stat-box" style="padding:12px;border-color:#ef4444;"><div style="font-size:20px;color:#ef4444;font-weight:700;">${data[4]}</div><div style="font-size:10px;color:#94a3b8;">🏘️ Localités</div></div></div>
+<div class="col-6 mb-2"><div class="stat-box" style="padding:12px;border-color:#f97316;"><div style="font-size:20px;color:#f97316;font-weight:700;">${data[2]}</div><div style="font-size:10px;color:#94a3b8;">🛣️ Routes</div></div></div>
+<div class="col-6 mb-2"><div class="stat-box" style="padding:12px;border-color:#8b5cf6;"><div style="font-size:20px;color:#8b5cf6;font-weight:700;">${total}</div><div style="font-size:10px;color:#94a3b8;">📍 Total</div></div></div>`;
+                }
+
+                // TABLE 1: INVENTAIRE DES COUCHES
+                const chartDoughnut = document.getElementById('chartDoughnut');
+                if (chartDoughnut) {
+                    let tableHTML = `<table style="width:100%;font-size:11px;border-collapse:collapse;">
+<tr style="background:rgba(6,182,212,0.2);">
+<th style="padding:8px;text-align:left;border-bottom:2px solid #06b6d4;color:#06b6d4;font-weight:600;">Couche</th>
+<th style="padding:8px;text-align:center;border-bottom:2px solid #06b6d4;color:#06b6d4;font-weight:600;">Objets</th>
+<th style="padding:8px;text-align:right;border-bottom:2px solid #06b6d4;color:#06b6d4;font-weight:600;">%</th>
+</tr>`;
+                    
+                    labels.forEach((label, i) => {
+                        const pct = ((data[i] / total) * 100).toFixed(1);
+                        tableHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+<td style="padding:8px;color:#e2e8f0;"><span style="display:inline-block;width:10px;height:10px;background:${colors[i]};margin-right:6px;border-radius:2px;"></span>${label}</td>
+<td style="padding:8px;text-align:center;color:#94a3b8;font-weight:600;">${data[i]}</td>
+<td style="padding:8px;text-align:right;color:#22c55e;font-weight:600;">${pct}%</td>
+</tr>`;
+                    });
+                    
+                    tableHTML += `<tr style="background:rgba(34,197,94,0.2);">
+<td style="padding:8px;color:#22c55e;font-weight:600;">TOTAL</td>
+<td style="padding:8px;text-align:center;color:#22c55e;font-weight:600;">${total}</td>
+<td style="padding:8px;text-align:right;color:#22c55e;font-weight:600;">100%</td>
+</tr></table>`;
+                    
+                    chartDoughnut.innerHTML = tableHTML;
+                }
+
+                // TABLE 2: STATISTIQUES DÉTAILLÉES
+                const chartBar = document.getElementById('chartBar');
+                if (chartBar) {
+                    let statsHTML = `<table style="width:100%;font-size:11px;border-collapse:collapse;">
+<tr style="background:rgba(249,115,22,0.2);">
+<th style="padding:8px;text-align:left;border-bottom:2px solid #f97316;color:#f97316;font-weight:600;">Métrique</th>
+<th style="padding:8px;text-align:right;border-bottom:2px solid #f97316;color:#f97316;font-weight:600;">Valeur</th>
+</tr>`;
+                    
+                    const maxData = Math.max(...data);
+                    const minData = Math.min(...data);
+                    const avgData = (total / data.length).toFixed(0);
+                    
+                    statsHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:8px;color:#e2e8f0;">Total Objets</td><td style="padding:8px;text-align:right;color:#06b6d4;font-weight:600;">${total}</td></tr>`;
+                    statsHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:8px;color:#e2e8f0;">Couches</td><td style="padding:8px;text-align:right;color:#22c55e;font-weight:600;">${data.length}</td></tr>`;
+                    statsHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:8px;color:#e2e8f0;">Maximum</td><td style="padding:8px;text-align:right;color:#ef4444;font-weight:600;">${maxData} (${labels[data.indexOf(maxData)]})</td></tr>`;
+                    statsHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:8px;color:#e2e8f0;">Minimum</td><td style="padding:8px;text-align:right;color:#8b5cf6;font-weight:600;">${minData} (${labels[data.indexOf(minData)]})</td></tr>`;
+                    statsHTML += `<tr style="background:rgba(34,197,94,0.2);"><td style="padding:8px;color:#22c55e;font-weight:600;">Moyenne</td><td style="padding:8px;text-align:right;color:#22c55e;font-weight:600;">${avgData}</td></tr></table>`;
+                    
+                    chartBar.innerHTML = statsHTML;
+                }
+
+                // TABLE 3: DISTRIBUTION
+                const chartLine = document.getElementById('chartLine');
+                if (chartLine) {
+                    let distHTML = `<table style="width:100%;font-size:11px;border-collapse:collapse;">
+<tr style="background:rgba(59,130,246,0.2);">
+<th style="padding:8px;text-align:left;border-bottom:2px solid #3b82f6;color:#3b82f6;font-weight:600;">Couche</th>
+<th style="padding:8px;text-align:center;border-bottom:2px solid #3b82f6;color:#3b82f6;font-weight:600;">Barre</th>
+</tr>`;
+                    
+                    const maxVal = Math.max(...data);
+                    labels.forEach((label, i) => {
+                        const barWidth = (data[i] / maxVal) * 100;
+                        distHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+<td style="padding:8px;color:#e2e8f0;width:40%;font-weight:600;">${label}</td>
+<td style="padding:8px;"><div style="width:100%;height:20px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;"><div style="width:${barWidth}%;height:100%;background:${colors[i]};display:flex;align-items:center;justify-content:flex-end;padding-right:6px;"><span style="color:#fff;font-size:10px;font-weight:600;">${data[i]}</span></div></div></td>
+</tr>`;
+                    });
+                    
+                    distHTML += `</table>`;
+                    chartLine.innerHTML = distHTML;
+                }
+
+                console.log('✅ Tables affichées!');
+
+                // Remplir sélecteur
+                const spatialLayerSelect = document.getElementById('spatialLayer');
+                if (spatialLayerSelect) {
+                    results.forEach(r => {
+                        const option = document.createElement('option');
+                        option.value = r.id;
+                        option.textContent = r.config.name;
+                        spatialLayerSelect.appendChild(option);
+                    });
+                }
+            },
+
+            initTools: function() {
+                const drawControl = new L.Control.Draw({
+                    edit: { featureGroup: this.drawnItems },
+                    draw: {
+                        polygon: true,
+                        polyline: true,
+                        rectangle: true,
+                        circle: true,
+                        marker: true
+                    }
+                });
+                this.map.addControl(drawControl);
+                
+                this.map.on(L.Draw.Event.CREATED, (e) => {
+                    this.drawnItems.addLayer(e.layer);
+                });
+
+                const measure = L.control.measure({
+                    primaryLengthUnit: 'kilometers',
+                    secondaryLengthUnit: 'meters'
+                });
+                measure.addTo(this.map);
+
+                const miniMapLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+                new L.Control.MiniMap(miniMapLayer, {
+                    toggleDisplay: true,
+                    minimized: false,
+                    position: 'bottomleft'
+                }).addTo(this.map);
+            },
+
+            createLegend: function() {
+                const legend = L.control({ position: 'bottomleft' });
+                legend.onAdd = () => {
+                    const div = L.DomUtil.create('div', 'map-legend');
+                    div.innerHTML = `
+                        <div class="legend-header"><i class="bi bi-map-fill"></i> LÉGENDE</div>
+                        <div class="legend-row">
+                            <div class="legend-symbol" style="background: #22c55e;"></div>
+                            <span class="legend-label">Écoles</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-symbol" style="background: #ef4444;"></div>
+                            <span class="legend-label">Localités</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-symbol line" style="background: #f97316;"></div>
+                            <span class="legend-label">Routes</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-symbol polygon" style="border-color: #8b5cf6;"></div>
+                            <span class="legend-label">Arrondissements</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-symbol polygon" style="border-color: #64748b;"></div>
+                            <span class="legend-label">Départements</span>
+                        </div>
+                    `;
+                    return div;
+                };
+                legend.addTo(this.map);
+            },
+
+            initUI: function() {
+                this.ui = {
+                    togglePanel: function(panelId) {
+                        const allPanels = document.querySelectorAll('.sidebar-panel');
+                        const targetPanel = document.getElementById(`panel-${panelId}`);
+                        
+                        allPanels.forEach(p => {
+                            if (p === targetPanel && !p.classList.contains('active')) {
+                                p.classList.add('active');
+                            } else {
+                                p.classList.remove('active');
+                            }
+                        });
+
+                        document.querySelectorAll('.nav-btn').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        if (event && event.currentTarget) {
+                            event.currentTarget.classList.add('active');
+                        }
+                        
+                        // Redessiner les graphiques quand le panel Stats s'ouvre
+                        if (panelId === 'stats') {
+                            setTimeout(() => {
+                                if (app.charts.doughnut) app.charts.doughnut.resize();
+                                if (app.charts.bar) app.charts.bar.resize();
+                                if (app.charts.line) app.charts.line.resize();
+                                console.log('✅ Graphiques redimensionnés et rafraîchis');
+                            }, 150);
+                        }
+                    },
+
+                    closeAllPanels: function() {
+                        document.querySelectorAll('.sidebar-panel').forEach(p => {
+                            p.classList.remove('active');
+                        });
+                    }
+                };
+            },
+
+            tools: {
+                zoomGlobal: function() {
+                    const group = L.featureGroup();
+                    Object.values(app.layers).forEach(layer => {
+                        try {
+                            group.addLayer(layer);
+                        } catch(e) {}
+                    });
+                    
+                    if (group.getLayers().length > 0) {
+                        try {
+                            app.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+                        } catch(e) {
+                            app.map.setView([14.95, -14.97], 10);
+                        }
+                    } else {
+                        app.map.setView([14.95, -14.97], 10);
+                    }
+                },
+                
+                zoomToLayer: function(id) {
+                    const layer = app.layers[id];
+                    if (layer) {
+                        try {
+                            app.map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                        } catch(e) {
+                            console.warn('Impossible de zoomer sur la couche');
+                        }
+                    }
+                    app.ui.closeAllPanels();
+                },
+
+                downloadData: function() {
+                    if (app.drawnItems.getLayers().length === 0) {
+                        alert("Dessinez d'abord des objets sur la carte");
+                        return;
+                    }
+                    const data = app.drawnItems.toGeoJSON();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `tivaouane_export_${new Date().toISOString().split('T')[0]}.geojson`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                },
+
+                clearDrawings: function() {
+                    if (confirm("Effacer tous les dessins ?")) {
+                        app.drawnItems.clearLayers();
+                    }
+                }
+            },
+
+            spatialTools: {
+                bufferLayer: null,
+                heatmapLayer: null,
+
+                createBuffer: function() {
+                    const distance = parseFloat(document.getElementById('bufferDistance').value);
+                    if (!distance || distance <= 0) {
+                        alert('Entrez une distance valide (> 0)');
+                        return;
+                    }
+
+                    if (app.drawnItems.getLayers().length === 0) {
+                        alert('Dessinez d\'abord un objet sur la carte');
+                        return;
+                    }
+
+                    const drawnGeoJSON = app.drawnItems.toGeoJSON();
+                    try {
+                        const buffered = turf.buffer(drawnGeoJSON, distance, { units: 'kilometers' });
+                        
+                        if (app.spatialTools.bufferLayer) {
+                            app.map.removeLayer(app.spatialTools.bufferLayer);
+                        }
+
+                        app.spatialTools.bufferLayer = L.geoJSON(buffered, {
+                            style: {
+                                color: '#06b6d4',
+                                weight: 3,
+                                opacity: 0.5,
+                                dashArray: '5, 5',
+                                fillColor: '#06b6d4',
+                                fillOpacity: 0.1
+                            }
+                        }).addTo(app.map);
+
+                        alert(`✅ Buffer de ${distance}km créé avec succès!`);
+                    } catch (error) {
+                        alert('Erreur: Sélectionnez une géométrie valide');
+                        console.error(error);
+                    }
+                },
+
+                calculateStats: function() {
+                    const layerId = document.getElementById('spatialLayer').value;
+                    if (!layerId) {
+                        alert('Sélectionnez une couche');
+                        return;
+                    }
+
+                    const geojsonData = app.layersData[layerId];
+                    if (!geojsonData || geojsonData.features.length === 0) {
+                        alert('Aucune donnée dans cette couche');
+                        return;
+                    }
+
+                    try {
+                        const features = geojsonData.features;
+                        let stats = {
+                            total: features.length,
+                            types: {}
+                        };
+
+                        features.forEach(feature => {
+                            const type = feature.geometry.type;
+                            stats.types[type] = (stats.types[type] || 0) + 1;
+                        });
+
+                        if (features[0].geometry.type === 'Point') {
+                            const points = turf.points(
+                                features.map(f => ({ coordinates: f.geometry.coordinates }))
+                            );
+                            const bbox = turf.bbox(turf.featureCollection(features));
+                            stats.bbox = bbox;
+                            stats.area = 'N/A';
+                        }
+
+                        let message = `📊 STATISTIQUES - ${document.getElementById('spatialLayer').options[document.getElementById('spatialLayer').selectedIndex].text}\n\n`;
+                        message += `Total d'objets: ${stats.total}\n`;
+                        message += `Types: ${JSON.stringify(stats.types)}\n`;
+                        if (stats.bbox) {
+                            message += `Étendue: ${stats.bbox.map(v => v.toFixed(4)).join(', ')}`;
+                        }
+
+                        alert(message);
+                        console.log('Statistiques complètes:', stats);
+                    } catch (error) {
+                        alert('Erreur lors du calcul');
+                        console.error(error);
+                    }
+                },
+
+                findNearest: function() {
+                    const layerId = document.getElementById('spatialLayer').value;
+                    if (!layerId) {
+                        alert('Sélectionnez une couche');
+                        return;
+                    }
+
+                    if (app.drawnItems.getLayers().length === 0) {
+                        alert('Dessinez un point de référence');
+                        return;
+                    }
+
+                    try {
+                        const referencePoint = app.drawnItems.toGeoJSON().features[0];
+                        if (referencePoint.geometry.type !== 'Point') {
+                            alert('Créez un point de référence');
+                            return;
+                        }
+
+                        const geojsonData = app.layersData[layerId];
+                        const pointFeatures = geojsonData.features.filter(f => f.geometry.type === 'Point');
+
+                        if (pointFeatures.length === 0) {
+                            alert('Aucun point dans cette couche');
+                            return;
+                        }
+
+                        let nearest = null;
+                        let minDistance = Infinity;
+
+                        pointFeatures.forEach(feature => {
+                            const distance = turf.distance(referencePoint, feature, { units: 'kilometers' });
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                nearest = { feature, distance };
+                            }
+                        });
+
+                        alert(`✅ Objet le plus proche trouvé!\nDistance: ${nearest.distance.toFixed(2)} km\nNom: ${nearest.feature.properties.nom || 'N/A'}`);
+                    } catch (error) {
+                        alert('Erreur lors de la recherche');
+                        console.error(error);
+                    }
+                },
+
+                heatmap: function() {
+                    const layerId = document.getElementById('spatialLayer').value;
+                    if (!layerId) {
+                        alert('Sélectionnez une couche');
+                        return;
+                    }
+
+                    const geojsonData = app.layersData[layerId];
+                    const pointFeatures = geojsonData.features.filter(f => f.geometry.type === 'Point');
+
+                    if (pointFeatures.length === 0) {
+                        alert('Aucun point dans cette couche');
+                        return;
+                    }
+
+                    const latlngs = pointFeatures.map(f => [
+                        f.geometry.coordinates[1],
+                        f.geometry.coordinates[0],
+                        1
+                    ]);
+
+                    if (app.spatialTools.heatmapLayer) {
+                        app.map.removeLayer(app.spatialTools.heatmapLayer);
+                    }
+
+                    app.spatialTools.heatmapLayer = L.heatLayer(latlngs, {
+                        radius: 25,
+                        blur: 20,
+                        max: 100,
+                        gradient: {0.4: '#0000ff', 0.65: '#00ff00', 1: '#ff0000'}
+                    }).addTo(app.map);
+
+                    alert('✅ Carte de chaleur créée!');
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 DOM Chargé - Chart disponible?', typeof Chart !== 'undefined');
+            app.init();
+        });
+    </script>
+</body>
+</html>
